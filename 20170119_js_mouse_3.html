@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Mouse movement</title>
+<link rel="stylesheet" href="css/bootstrap.css">
+<link href="https://fonts.googleapis.com/css?family=Dorsa" rel="stylesheet">
+
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(event){
+
+var mouseY;
+var mouseX;
+
+document.querySelector('body')
+.addEventListener('mousemove', function(event){
+	mouseX = event.clientX;
+	mouseY = event.clientY;
+	document.querySelector("#mouse-cursor").style.top = (mouseY - 0)+"px";
+	document.querySelector("#mouse-cursor").style.color = "black";
+});
+document.querySelector('body')
+.addEventListener('click', function(event){
+	document.querySelector("#mouse-cursor").style.color = "red";
+
+	document.querySelector("#stamp1").style.top = (mouseY - 0)+"px";
+	document.querySelector("#stamp1").style.height = "100vh";
+
+	if(mouseY < 250){
+		document.querySelector(".container").style.color = "red";
+		document.querySelector("#stamp1").style.background = "blue";
+	}
+
+		if(mouseY > 251){
+		document.querySelector(".container").style.color = "black";
+		document.querySelector("#stamp1").style.background = "yellow";
+	}
+});
+
+});
+
+</script>
+
+<style type="text/css">
+body{
+	cursor: none;
+}
+h1{
+	font-family: serif;
+	letter-spacing: -0.01em;
+	font-size:42px;
+	padding-top:0px;
+}
+h3{
+	letter-spacing: 0.01em;
+	line-height: 1.2em;
+}
+.main-area{
+	width:100%;
+}
+.container{
+	transition-duration: .5s;
+}
+#mouse-cursor{
+	position: fixed;
+	top:0px;
+	font-size:14px;
+	font-weight: bold;
+	font-family: sans-serif;
+	border-bottom:1px solid red;
+	width:100%;
+	left:0px;
+	z-index: 1;
+}
+#stamp1{
+	position:fixed;
+	background:yellow;
+	width:100%;
+	height:100vh;
+	bottom:0px;
+	left:0px;
+	top:90%;
+	transition-duration: .5s;
+	z-index: -2;
+}
+#background-message{
+	position: fixed;
+	text-align: center;
+	top:-300px;
+	width:100%;
+	font-family: 'Dorsa', sans-serif;
+	font-size:1000px;
+	color:white;
+	z-index: -1;
+}
+#label{
+	font-weight: bold;
+	font-size:15px;
+	letter-spacing: 0.01em;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+<div id="text">
+	<h1 class="text-center" style="margin-bottom:30px">Some Kind of Title <br>needs to be here</h1>
+	<div style="padding-bottom:20px">
+		<p class="text-center" id="label">Consectetur Adipisicing elit, 2017</p>
+	</div>
+	<h3>orem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+	tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+	quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+	consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+	cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+	proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</h3>
+	<h3>orem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+	tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+	quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+	consequat. Duis aute irt labore et dolore magna aliqua. Ut enim ad minim veniam,
+	quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+	consequat. Duis aute iruret labore et dolore magna aliqua. Ut enim ad minim veniam,quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+	consequat. Duis aute irureurt labore et dolore magna aliqua. Ut enim ad minim veniam,quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+	consequat. Duis aute iruret labore et dolore magna aliqua. Ut enim ad minim veniam,quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+	consequat. Duis aute iruree dolor in reprehenderit in voluptate velit esse
+	cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+	proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</h3>
+	<h3>orem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+	tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+	quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+	consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+	cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+	proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</h3>
+</div>
+</div>
+
+<div class="main-area">
+
+</div>
+
+<div id="mouse-cursor">
+</div>
+
+<div id="stamp1">
+</div>
+
+<div id="background-message">
+	EXIT HERE
+</div>
+
+
+
+</body>
+</html>

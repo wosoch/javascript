@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Mouse movement</title>
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(event){
+
+var mouseY;
+var mouseX;
+
+document.querySelector('body')
+.addEventListener('mousemove', function(event){
+	mouseX = event.clientX;
+	mouseY = event.clientY;
+	document.querySelector("#mouse-cursor").style.top = (mouseY - 0)+"px";
+	document.querySelector("#mouse-cursor").style.left = mouseX+"px";
+	document.querySelector("#mouse-cursor").style.color = "black";
+});
+document.querySelector('body')
+.addEventListener('click', function(event){
+	document.querySelector("#mouse-cursor").style.color = "red";
+
+	document.querySelector("#stamp1").style.top = (mouseY - 0)+"px";
+	document.querySelector("#stamp1").style.left = (mouseX - 0)+"px";
+	document.querySelector("#stamp1").style.opacity = "0.5";
+});
+
+});
+
+</script>
+
+<style type="text/css">
+body{
+	cursor: none;
+}
+.main-area{
+	width:100%;
+	height:100vh;
+}
+#mouse-cursor{
+	position: fixed;
+	top:0px;
+	font-size:14px;
+	font-weight: bold;
+	font-family: sans-serif;
+}
+#stamp1{
+	position: fixed;
+	opacity: 0.5;
+	font-size:14px;
+	font-weight: bold;
+	font-family: sans-serif;
+}
+</style>
+
+</head>
+<body>
+
+<div class="main-area">
+
+</div>
+
+<div id="mouse-cursor">
+	MOUSE
+</div>
+
+
+<div id="stamp1">
+	MOUSE
+</div>
+
+
+</body>
+</html>

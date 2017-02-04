@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Scroll Test</title>
+
+<link rel="stylesheet" href="css/bootstrap.css">
+
+<script type="text/javascript" src="js/jquery-2.2.2.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript">
+
+document.addEventListener("DOMContentLoaded", function(event){
+
+	var windoRatio = ((document.body.clientHeight-window.innerHeight)/(window.innerHeight));
+	var percentLoc;
+
+	document.querySelector('#button2')
+	.addEventListener("click", function(event){
+		window.scrollBy(0,200) 
+	});
+	document.querySelector('#button2')
+	.addEventListener("mouseover", function(event){
+		document.querySelector('.downarrow').style.fill = "black";
+
+	});
+	document.querySelector('#button2')
+	.addEventListener("mouseout", function(event){
+		document.querySelector('.downarrow').style.fill = "#FFFFFF";
+	});
+
+	window.onscroll = function() {
+		if(document.body.scrollTop < 90){
+			document.querySelector('body').style.background = "white";
+		}
+		if(document.body.scrollTop > 100){
+			document.querySelector('body').style.background = "black";
+			document.querySelector('#foot').style.color = "#404040";
+			document.querySelector('#losss-h1').style.opacity = "0";
+		}
+		if(document.body.scrollTop > (document.body.clientHeight - (window.innerHeight + 10))){
+			document.querySelector('body').style.background = "gray";
+			document.querySelector('#foot').style.color = "white";
+			document.querySelector('#losss-h1').style.opacity = "1";
+		}
+
+		percentLoc = ((document.body.scrollTop)/((document.body.clientHeight-window.innerHeight)/(window.innerHeight)));
+
+		document.querySelector('#line').style["top"] = percentLoc + "px";
+		document.querySelector('#percent').style["top"] = percentLoc + "px";
+		document.querySelector('#percent').textContent = Math.round((percentLoc/window.innerHeight)*100) + "%";
+
+//		console.log(((percentLoc/window.innerHeight)*100));
+
+
+//		backback
+
+		document.querySelector('#ruler>div:nth-child(1)').style['border-bottom'] = "1px solid #404040";
+		document.querySelector('#ruler>div:nth-child(2)').style['border-bottom'] = "1px solid #404040";
+		document.querySelector('#ruler>div:nth-child(3)').style['border-bottom'] = "1px solid #404040";
+		document.querySelector('#ruler>div:nth-child(4)').style['border-bottom'] = "1px solid #404040";
+		document.querySelector('#ruler>div:nth-child(5)').style['border-bottom'] = "1px solid #404040";
+		document.querySelector('#ruler>div:nth-child(6)').style['border-bottom'] = "1px solid #404040";
+		document.querySelector('#ruler>div:nth-child(7)').style['border-bottom'] = "1px solid #404040";
+		document.querySelector('#ruler>div:nth-child(8)').style['border-bottom'] = "1px solid #404040";
+		document.querySelector('#ruler>div:nth-child(9)').style['border-bottom'] = "1px solid #404040";
+
+
+//		white measurement
+
+		if(1 < ((percentLoc/window.innerHeight)*100) && ((percentLoc/window.innerHeight)*100) < 10){
+
+		}else if(11 < ((percentLoc/window.innerHeight)*100) && ((percentLoc/window.innerHeight)*100) < 20){
+			document.querySelector('#ruler>div:nth-child(1)').style['border-bottom'] = "1px solid white";
+		}else if(21 < ((percentLoc/window.innerHeight)*100) && ((percentLoc/window.innerHeight)*100) < 30){
+			document.querySelector('#ruler>div:nth-child(2)').style['border-bottom'] = "1px solid white";
+		}else if(31 < (Math.round((percentLoc/window.innerHeight)*100)) && ((percentLoc/window.innerHeight)*100) < 40){
+			document.querySelector('#ruler>div:nth-child(3)').style['border-bottom'] = "1px solid white";
+		}else if(41 < (Math.round((percentLoc/window.innerHeight)*100)) && ((percentLoc/window.innerHeight)*100) < 50){
+			document.querySelector('#ruler>div:nth-child(4)').style['border-bottom'] = "1px solid white";
+		}else if(51 < (Math.round((percentLoc/window.innerHeight)*100)) && ((percentLoc/window.innerHeight)*100) < 60){
+			document.querySelector('#ruler>div:nth-child(5)').style['border-bottom'] = "1px solid white";
+		}else if(61 < (Math.round((percentLoc/window.innerHeight)*100)) && ((percentLoc/window.innerHeight)*100) < 70){
+			document.querySelector('#ruler>div:nth-child(6)').style['border-bottom'] = "1px solid white";
+		}else if(71 < (Math.round((percentLoc/window.innerHeight)*100)) && ((percentLoc/window.innerHeight)*100) < 80){
+			document.querySelector('#ruler>div:nth-child(7)').style['border-bottom'] = "1px solid white";
+		}else if(81 < (Math.round((percentLoc/window.innerHeight)*100)) && ((percentLoc/window.innerHeight)*100) < 90){
+			document.querySelector('#ruler>div:nth-child(8)').style['border-bottom'] = "1px solid white";
+		}else if(91 < (Math.round((percentLoc/window.innerHeight)*100))){
+			document.querySelector('#ruler>div:nth-child(9)').style['border-bottom'] = "1px solid white";
+		}
+	}
+});
+</script>
+<style type="text/css">
+body{
+	transition-duration: .5s;
+}
+.icons{
+	width:50px;
+	height:50px;
+}
+.downarrow{
+	fill:#FFFFFF;
+}
+#line{
+	position: fixed;
+	top:0px;
+	height:1px;
+	width:100%;
+	background:red;
+	z-index: -1;
+}
+#percent{
+	position: fixed;
+	top:0px;
+	height:15px;
+	width:100%;
+	color:red;
+	font-size:18px;
+	margin-left:20px;
+	padding-top:4px;
+	z-index: 1;
+}
+#button2{
+	cursor:pointer;
+}
+#header{
+	position: fixed;
+	margin-left:120px;
+}
+#gray{
+	margin:20px;
+	height:2000px;
+
+}
+#gray-text{
+	padding-top:30px;
+	font-size: 62px;
+	color:gray;
+	font-family: serif;
+	letter-spacing: -0.01em;
+	line-height: 1.13em;
+}
+#foot{
+	bottom:0px;
+	font-size: 16px;
+	font-family: sans-serif;
+	padding-top:0px;
+	width:100%;
+	color:#404040;
+	transition-duration: .5s;
+	letter-spacing: 0.02em;
+}
+#losss{
+	 position:fixed;
+	 width:100%; 
+	 height:100px;
+	 top:50%
+}
+#losss-h1{
+	color:white;
+	font-size:78px;
+	font-family: serif;
+	opacity:0;
+	transition-duration: .25s;
+}
+#ruler{
+	top:0;
+	right:0;
+	position: fixed;
+	height:100vh;
+	width:70px;
+}
+.ruler-div{
+	height:10%;
+	border-bottom:1px solid #404040;
+}
+</style>
+</head>
+<body>
+
+<div id="header">
+
+	<div class="icons">
+		<svg id="button2" viewBox="0 0 50 50">
+		<path class="downarrow" d="M25,1c13.2,0,24,10.8,24,24S38.2,49,25,49S1,38.2,1,25S11.8,1,25,1 M25,0C11.2,0,0,11.2,0,25s11.2,25,25,25
+			s25-11.2,25-25S38.8,0,25,0L25,0z"/><g><polygon class="downarrow" points="25,35.1 9.1,19.2 9.8,18.5 25,33.7 40.2,18.5 40.9,19.2 	"/></g>
+		</svg>
+	</div>
+
+</div>
+
+<div id="line">
+</div>
+<div id="percent">
+	<p id="percent-text"></p>
+</div>
+<div id="losss">
+	<div class="container">
+		<h1 id="losss-h1">Lorem ipsum dolor sit amet</h1>
+	</div>
+</div>
+
+<div id="ruler">
+	<div class="ruler-div"></div>
+	<div class="ruler-div"></div>
+	<div class="ruler-div"></div>
+	<div class="ruler-div"></div>
+	<div class="ruler-div"></div>
+	<div class="ruler-div"></div>
+	<div class="ruler-div"></div>
+	<div class="ruler-div"></div>
+	<div class="ruler-div"></div>
+</div>
+
+<div id="gray">
+	<div class="container" id="gray-text">
+	Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+	tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+	quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+	consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+	cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+	proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+	tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+	quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+	consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+	cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+	proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+	tempor incididunt ut.
+	</div>
+
+	<div id="foot">
+		<div class="container">
+			<div class="row" style="margin-top:200px">
+				<div class="col-xs-3">
+					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod</p>
+				</div>
+
+				<div class="col-xs-3">
+					<p>nulla pariatur. Excepteur sint occaecat cupidatat non
+		proident, sunt in culpa qui</p>
+				</div>
+
+				<div class="col-xs-3">
+					<p>C. –2017</p>
+				</div>
+				<div class="col-xs-3">
+					<p>labore et dolore magna aliqua. Ut enim ad minim veniam,
+	quis nostrud exercitation</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+</body>
+</html>
