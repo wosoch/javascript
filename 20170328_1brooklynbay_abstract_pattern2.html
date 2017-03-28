@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+
+<script type="text/javascript" src="js/jquery2.js"></script>
+<script type="text/javascript" src="js/handlebars-v4.0.5.js"></script>
+<link rel="stylesheet" href="css/bootstrap.css">
+<style type="text/css">
+*{
+	transition-duration: .25s;
+}
+body{
+	background-color:#8c8c8c;
+}
+.module{
+	background-color:#7a7a7a;
+	height:10px;
+}
+h1{
+	font-size: 100px;
+}
+h2{
+	font-size:72px;
+}
+.display{
+	line-height: 0.9em;
+}
+.display2{
+	line-height: 1em;
+}
+#overl{
+	position: fixed;
+	top:0px;
+	left:20px;
+	width:400px;
+	height:200px;
+	color:white;
+}
+#overl2{
+	position: fixed;
+	bottom:12px;
+	left:20px;
+	width:700px;
+	height:200px;
+	color:white;
+}
+</style>
+</head>
+<body>
+
+<div>
+	<div id="contents"></div>
+</div>
+
+ <div class="container-fluid" id="overl">
+ 	<div><h1 class="display">72°F<br/>Sunny</h1></div>
+ </div>
+
+  <div class="container-fluid" id="overl2">
+ 	<div><h2 class="display2">10:21am<br/>Tuesday, Apr 28</h2></div>
+ </div>
+
+<script type="text/x-template-handlebars" id="template">
+<div class="row">
+	{{#each posts}}
+		<div class="col-xs-2">
+			<div class="module" style="width:{{title}}%">
+				<!-- <p>{{title}}</p> -->
+			</div>
+		</div>
+	{{/each}}
+</div>
+</script>
+
+<script type="text/javascript">
+
+var data = {posts:[
+
+]};
+
+var source;
+var template;
+var html;
+
+source = $("#template").html();
+template = Handlebars.compile(source);
+html = template(data);
+$("#contents").html(html);
+
+setInterval(function(){
+	var random = (Math.random())*100;
+	random = Math.round(random);
+
+	data.posts.push({title:random});
+	html = template(data);
+	$("#contents").html(html);
+
+	window.scrollTo(0,document.body.scrollHeight);
+},50)
+
+// document.querySelector("#btntn").addEventListener("click",function(){
+// 	data.posts.push({title:'additional'});
+// 	html = template(data);
+// 	$("#contents").html(html);
+// })
+
+// var div = document.createElement('div');
+// div.id = "special";
+// document.querySelector('body').appendChild(div);
+
+</script>
+
+</body>
+</html>

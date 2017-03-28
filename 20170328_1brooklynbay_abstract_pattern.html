@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<script type="text/javascript" src="js/jquery2.js"></script>
+<link rel="stylesheet" href="css/bootstrap.css">
+<style type="text/css">
+*{
+}
+body{
+	background-color: #262626;
+}
+.basic{
+	width:100px;
+	height:100px;
+	display: inline-block;
+}
+.basicInner{
+	position:relative;
+	margin:auto;
+	background-color: #515151;
+	border-radius: 100px;
+	transition-duration: .25s;
+}
+h1{
+	font-size: 100px;
+}
+h2{
+	font-size:72px;
+}
+.display{
+	line-height: 0.9em;
+}
+.display2{
+	line-height: 1em;
+}
+#overl{
+	position: fixed;
+	top:0px;
+	left:20px;
+	width:400px;
+	height:200px;
+	color:white;
+}
+#overl2{
+	position: fixed;
+	bottom:12px;
+	left:20px;
+	width:700px;
+	height:200px;
+	color:white;
+}
+</style>
+</head>
+<body>
+
+<div id="content">
+	
+</div>
+
+ <div class="container-fluid" id="overl">
+ 	<div><h1 class="display">72°F<br/>Cloudy</h1></div>
+ </div>
+
+  <div class="container-fluid" id="overl2">
+ 	<div><h2 class="display2">11:30pm<br/>Tuesday, Apr 28</h2></div>
+ </div>
+
+<script type="text/javascript">
+	for(i=0; i<200; i++){
+		var div = document.createElement('div');
+		div.className = "basic";
+		document.querySelector("#content").appendChild(div);
+
+		var ran = Math.round((Math.random())*100);
+
+		var div = document.createElement('div');
+		div.className = "basicInner"
+		div.style.width = ran + "px";
+		div.style.height = ran + "px";
+		document.getElementsByClassName("basic")[i].appendChild(div);
+	}
+
+	// window.document.addEventListener("mousemove", function(e){
+	// 	var mouseX = e.clientX;
+	// 	if (mouseX < 100){
+	// 		console.log('small')
+	// 	}else if(mouseX < 999){
+	// 		console.log('med')
+	// 	}else if(mouseX > 1000){
+	// 		console.log('lg')
+	// 	}
+	// 	console.log(mouseX)
+	// })
+
+	setInterval(function(){
+		for(i=0; i<200; i++){
+			var ran = Math.round((Math.random())*100);
+			var ran2 = 100 - ran;
+			console.log(ran + " and " + ran2);
+			document.getElementsByClassName("basic")[i].children[0].style.width = ran + "px";
+			document.getElementsByClassName("basic")[i].children[0].style.height = ran + "px";
+			document.getElementsByClassName("basic")[i].children[0].style.top = ran2/3 + "px";
+			// document.getElementsByClassName("basic")[i].children[0].style.opacity = ran/100;
+		}
+	},200)
+
+
+
+</script>
+
+</body>
+</html>

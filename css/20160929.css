@@ -1,0 +1,13 @@
+	#alt{
+		margin-top:200px;
+		margin-left:200px;
+		width:100px;
+		height:100px;
+		background-color: black;
+		transition-duration: .5s;
+	}
+	#angleview{
+		margin-top:200px;
+		margin-left:200px;
+		font-family: sans-serif;
+	}
