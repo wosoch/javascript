@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<script type="text/javascript" src="js/jquery-2.2.2.js"></script>
+<script type="text/javascript" src="js/handlebars-v4.0.5.js"></script>
+<link rel="stylesheet" href="css/bootstrap.css">
+
+<style type="text/css">
+body{
+	width:100%;
+	height:100vh;
+	transition-duration: .5s;
+	background-color:black;
+}
+.particle{
+	position: fixed;
+	width:50px;
+	height:50px;
+	background-color:black;
+	transition-duration: 3s;
+	z-index: -2;
+	border-radius: 25px;
+}
+.member{
+	position: absolute;
+	font-size:16px;
+	text-transform: uppercase;
+	letter-spacing: .05em;
+	font-weight: 500;
+	color:red;
+}
+.locc{
+	font-size:12px;
+}
+</style>
+
+</head>
+<body>
+
+<script type="text/javascript">
+
+// var particleNum = prompt("how many particles do you want?");
+// var particleColor = prompt("in what color?");
+
+var particleNum = 200;
+var particleColor = "gray";
+
+console.log($('#move').css('top'))
+
+
+
+// var particleNum = 10;
+var particleOpa = 1 / particleNum;
+
+for (i = 0; i < particleNum; i++) { 
+	var div = document.createElement('div');
+	div.className = "particle";
+	div.style.top = "50%"
+	div.style.left = "50%"
+	div.style['background-color'] = particleColor;
+	div.style.opacity = 1 - (particleOpa * i);
+	div.style["transition-delay"] = (particleOpa * i)/2 + "s";
+	document.querySelector('body').appendChild(div);
+	div.id = "move"+ i;
+};
+
+var mouseX;
+var mouseY;
+var sweeetch = 0;
+
+// $('body').click(function(event){
+// 	for(var i = 0; i < particleNum; i++){
+// 		movePos("#move" + i);
+// 	}
+// 	mouseX = event.clientX;
+// 	mouseY = event.clientY;
+
+// 	var div2 = document.createElement('div');
+// 	div2.innerHTML = clickCount + ". <br><span class='locc'>" + mouseX + "x" + mouseY + "</span>";
+// 	div2.className = "member";
+// 	div2.style.top = mouseY + "px";
+// 	div2.style.left = mouseX + "px";
+// 	document.querySelector('body').appendChild(div2);
+// 	clickCount += 1;
+// })
+
+var windoHeight = window.innerHeight;
+var windoWidth = window.innerWidth;
+
+window.addEventListener("resize", function(){
+	windoHeight = window.innerHeight;
+	windoWidth = window.innerWidth;
+});
+
+function movePos(divName){
+	$(divName).css('top', windoHeight*(Math.random()))
+	$(divName).css('left',windoWidth*(Math.random()))
+}
+
+console.log(windoHeight + " and " + windoWidth)
+
+setInterval(function(){
+	for(var i = 0; i < particleNum; i++){
+			movePos("#move" + i);
+		}
+	mouseX = windoWidth*(Math.random());
+	mouseY = windoHeight*(Math.random());
+}, 3000)
+
+</script>
+
+</body>
+</html>
