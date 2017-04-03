@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<script src="js/jquery2.js"></script>
+<script src="js/handlebars-v4.0.5.js"></script>
+<link rel="stylesheet" href="css/bootstrap.css">
+<style type="text/css">
+.top{
+	padding:10px 10px 0px 10px
+}
+.entry{
+	margin:10px 0px 0px 0px;
+	padding:10px 10px 0px 10px;
+	font-size: 14px;
+	letter-spacing: 0.05em;
+	background-blend-mode: multiply;
+	transition-duration: .25s;
+}
+.date{
+	font-size:10px;
+}
+.line{
+	padding-bottom:2px;
+	border-bottom:1px solid #ededed;
+}
+#graph{
+	position: fixed;
+	width:100%;
+	height:30vh;
+	bottom:30px;
+	left:0px;
+	background-color: #f2f2f2;
+	z-index: -1;
+}
+.graphCont{
+	position: absolute;
+	bottom:0;
+	display: inline-block;
+	transition-duration: .25s;
+}
+#durationFrom, #durationTo{
+	border-bottom:1px solid #ededed;
+}
+#credits{
+	position: fixed;
+	width:100%;
+	height:30px;
+	bottom:0px;
+	left:0px;
+	background-color: gray;
+	z-index: -1;
+}
+#creditsText{
+	font-size:8px;
+	text-transform: uppercase;
+	color:white;
+	letter-spacing: 0.12em;
+}
+@media only screen and (max-width: 990px) {
+    #graph{
+		position: fixed;
+		width:100%;
+		height:100vh;
+		bottom:0px;
+		left:0px;
+		background-color: #f2f2f2;
+		z-index: -1;
+	}
+	#credits{
+		position: static;
+		width:100%;
+		margin-top:10px;
+		padding-top:15px;
+		height:70px;
+		bottom:0px;
+		left:0px;
+		background-color: gray;
+		z-index: -1;
+	}
+	#creditsText{
+		font-size:8px;
+		text-transform: uppercase;
+		color:white;
+		letter-spacing: 0.12em;
+	}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+	<div class="row">
+		<p class="top"><b>Bitcoin Price Chart</b><br/>From <span id="durationFrom"></span> to <span id="durationTo"></span></p>
+	</div>
+</div>
+
+<div class="container">
+	<div id="content"></div>
+</div>
+
+<div id="graph"></div>
+
+<div id="credits">
+	<div class="container">
+		<div class="row">
+			<p class="top" id="creditsText"></p>
+		</div>
+	</div>
+</div>
+
+
+<script type="text/x-template-handlebars" id="template">
+<div class="row">
+	{{#each entries}}
+		<div class="col-xs-3 col-sm-2 col-md-1 entry" id="{{@index}}">
+			<p><span class="date line">{{date}}</span><br/>{{price}}<br/><span class="date">{{change}}</span></p>
+		</div>
+	{{/each}}
+</div>
+</script>
+
+
+<script type="text/javascript">
+var source;
+var template;
+var html;
+var data = {};
+
+source = $("#template").html();
+template = Handlebars.compile(source);
+
+$(document).ready(function(){
+    $.getJSON('http://api.coindesk.com/v1/bpi/historical/close.json').then(function(res){
+
+        var entryLength = Object.values(res.bpi).length;
+
+        data = {entries:[]};
+
+        for(i=0; i<entryLength; i++){
+        	data.entries[i] = {data:'', price:''}
+        }
+
+
+        for(i=0; i<entryLength; i++){
+        	data.entries[i].date = Object.keys(res.bpi)[i];
+        	data.entries[i].price = Math.round((Object.values(res.bpi)[i])* 100) / 100;
+        	if(i !== 0){
+        		var num = Object.values(res.bpi)[i] - Object.values(res.bpi)[i-1];
+        		num = num / Object.values(res.bpi)[i-1];
+        		num = Math.round(num * 10000) / 10000;
+        		data.entries[i].change = num + "%";
+        	}else if(i == 0){
+        		data.entries[i].change = "N/A";
+        	}
+        }
+
+        html = template(data);
+       	$("#content").html(html);
+       	$("#durationFrom").text(Object.keys(res.bpi)[0]);
+       	$("#durationTo").text(Object.keys(res.bpi)[entryLength-1]);
+       	$("#creditsText").text(res.disclaimer + " / last updated on: " + res.time.updated)
+
+       	//colors
+       	for(i=0; i<entryLength; i++){
+       		if(i !== 0){
+       			if(data.entries[i].price > data.entries[i-1].price){
+       				document.getElementsByClassName("entry")[i].style.color = "#2072f7";
+       			}else if(data.entries[i].price < data.entries[i-1].price){
+       				document.getElementsByClassName("entry")[i].style.color = "#f44d41";
+       			}
+       		}else if(i == 0){
+       			document.getElementsByClassName("entry")[0].style.color = "gray";
+       		}
+       		
+       	}
+
+       	//highest val
+       	var max = Math.max.apply(Math,data.entries.map(function(ques){return ques.price;}))
+       	var min = Math.min.apply(Math,data.entries.map(function(ques){return ques.price;}))
+
+       	for(i=0; i<entryLength; i++){
+       		if(data.entries[i].price == max){
+       			document.getElementsByClassName("entry")[i].style["font-weight"] = '800'
+       		}else if(data.entries[i].price == min){
+       			document.getElementsByClassName("entry")[i].style["font-weight"] = '800'
+       		}
+       	}
+
+       	//graph
+       	for(i=0; i<entryLength; i++){
+       		var div = document.createElement("div");
+       		div.className = "graphCont";
+       		div.id = "graphCont" + i;
+       		div.style.width = 100/entryLength + "%";
+       		div.style.left = (100/entryLength)*i + "%";
+       		div.style["background-color"] = "#e5e5e5"
+       		div.style.height = (data.entries[i].price/max)*90 + "%";
+       		document.querySelector("#graph").appendChild(div);
+       	}
+
+       	//hover
+       	$(".graphCont").mouseover(function(){
+       		this.style["background-color"] = "#cecece"
+       		var number = this.id;
+       		number = number.replace('graphCont', '');
+       		document.getElementsByClassName("entry")[number].style["background-color"] = '#cecece'
+       	})
+       	$(".graphCont").mouseout(function(){
+       		this.style["background-color"] = "#e5e5e5"
+       		var number = this.id;
+       		number = number.replace('graphCont', '');
+       		document.getElementsByClassName("entry")[number].style["background-color"] = "transparent";
+       	})
+       	$(".entry").mouseover(function(){
+       		this.style["background-color"] = "#cecece"
+       		document.getElementsByClassName("graphCont")[this.id].style["background-color"] = '#cecece'
+       	})
+       	$(".entry").mouseout(function(){
+       		this.style["background-color"] = "transparent"
+       		document.getElementsByClassName("graphCont")[this.id].style["background-color"] = "#e5e5e5";
+       	})
+       	$("#durationFrom").mouseover(function(){
+       		this.style["background-color"] = "#cecece"
+       		document.getElementsByClassName("graphCont")[0].style["background-color"] = '#cecece'
+       		document.getElementsByClassName("entry")[0].style["background-color"] = '#cecece'
+       	})
+       	$("#durationFrom").mouseout(function(){
+       		this.style["background-color"] = "transparent"
+       		document.getElementsByClassName("graphCont")[0].style["background-color"] = "#e5e5e5";
+       		document.getElementsByClassName("entry")[0].style["background-color"] = "transparent";
+       	})
+       	$("#durationTo").mouseover(function(){
+       		this.style["background-color"] = "#cecece"
+       		document.getElementsByClassName("graphCont")[entryLength-1].style["background-color"] = '#cecece'
+       		document.getElementsByClassName("entry")[entryLength-1].style["background-color"] = '#cecece'
+       	})
+       	$("#durationTo").mouseout(function(){
+       		this.style["background-color"] = "transparent"
+       		document.getElementsByClassName("graphCont")[entryLength-1].style["background-color"] = "#e5e5e5";
+       		document.getElementsByClassName("entry")[entryLength-1].style["background-color"] = "transparent";
+       	})
+    })
+})
+</script>
+
+</body>
+</html>
