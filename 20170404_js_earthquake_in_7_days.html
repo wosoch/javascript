@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<link rel="stylesheet" href="css/bootstrap.css">
+<link href="https://fonts.googleapis.com/css?family=Karla|Space+Mono" rel="stylesheet">
+<script src="js/jquery2.js"></script>
+<script src="js/handlebars-v4.0.5.js"></script>
+<style type="text/css">
+*{
+	font-family: 'Karla', sans-serif;
+}
+h3{
+	color:gray;
+}
+p{
+	letter-spacing: 0.04em;
+	color:gray;
+}
+.entries{
+	position: absolute;
+	background-color:red;
+	transition-duration: .25s;
+}
+.entries:hover{
+	background-color:orange;
+	z-index: 1;
+}
+.link{
+	cursor:pointer;
+}
+#map{
+	position: fixed;
+	top:0px;
+	left:100px;
+	width:1080px;
+	height:540px;
+	margin:auto;
+	background-image: url("assets/world_map_2.png");
+	z-index: -1;
+}
+#content{
+	position: fixed;
+	top:0px;
+	left:100px;
+	width:1080px;
+	height:540px;
+	margin:auto;
+	z-index: 1;
+}
+#caption{
+	position: fixed;
+	padding: 10px;
+	background-color:gray;
+	color:white;
+	visibility: hidden;
+	z-index:1;
+	letter-spacing: 0.04em;
+}
+#footer{
+	position: fixed;
+	bottom:50px;
+	left:100px;
+	width:600px;
+	color:black;
+}
+#count{
+	font-family: 'Space Mono', monospace;
+	color:black;
+	border-bottom:1px solid gray;
+	letter-spacing: .06em;
+	font-size:.9em;
+}
+</style>
+</head>
+<body>
+
+<div>
+	<div id="map"></div>
+	<div id="content"></div>
+</div>
+
+<div id="caption">
+</div>
+
+<div id="footer">
+	<h3>USGS All Earthquakes Around the World<br/><span id="count"></span> Earthquakes in past 7 days</h3>
+	<p>Data provided by USGS</p>
+
+</div>
+
+<script type="text/x-template-handlebar" id="entries">
+{{#each entries}}
+	<a href="{{url}}" target="_blank" class="link">
+		<div class="entries" id="{{@index}}" style="width:{{size}}px; height:{{size}}px;left:{{coordinates_x}}px; top:{{coordinates_y}}px">
+		</div>
+	</a>
+{{/each}}
+</script>
+
+<script type="text/javascript">
+var source;
+var template;
+var html;
+var data;
+var mouseX;
+var mouseY;
+
+
+window.addEventListener("mousemove", function(e){
+	mouseX = e.clientX;
+	mouseY = e.clientY;
+	$("#caption").css("left", mouseX+10 +"px");
+	$("#caption").css("top", mouseY-10 +"px");
+})
+
+$(document).ready(function(){
+    $.getJSON('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson').then(function(res){
+
+    	console.log(res);
+
+    	//title
+    	console.log(res.features[0].properties.title);
+    	//coordinates
+    	console.log((res.features[0].geometry.coordinates[0]+540) + " and " + res.features[0].geometry.coordinates[1]+270);
+    	//place
+    	console.log(res.features[0].properties.place);
+    	//url
+    	console.log(res.features[3].properties.url);
+    	//magnitude
+    	console.log(res.features[0].properties.mag);
+        // var entryLength = Object.values(res.bpi).length;
+
+        data = {entries:[]};
+        var entryLength = res.features.length;
+        console.log(entryLength);
+
+        for(i=0; i<entryLength; i++){
+        	data.entries[i] = {title:'', coordinates_x:'', coordinates_y:'',place:'', url:'', mag:''}
+        }
+
+        for(i=0; i<entryLength; i++){
+        	data.entries[i].coordinates_x = ((res.features[i].geometry.coordinates[0]+180)*3)-(res.features[i].properties.mag*3);
+        	data.entries[i].coordinates_y = (
+        		(Math.abs(res.features[i].geometry.coordinates[1]-90))*3
+        		)-(res.features[i].properties.mag*1);
+
+        	data.entries[i].mag = res.features[i].properties.mag;
+        	data.entries[i].size = (res.features[i].properties.mag*2);
+        	data.entries[i].place = res.features[i].properties.place;
+        	data.entries[i].url = res.features[i].properties.url;
+        }
+
+        console.log(data);
+
+        source = $("#entries").html();
+        template = Handlebars.compile(source);
+        html = template(data);
+        $("#content").html(html);
+        $("#count").text(res.metadata.count)
+
+        $(".entries").mouseover(function(){
+        	var number = this.id;
+			$("#caption").text(res.features[number].properties.title);
+			$("#caption").css("visibility", "visible");
+		})
+
+		$(".entries").mouseout(function(){
+        	var number = this.id;
+			$("#caption").text("");
+			$("#caption").css("visibility", "hidden");
+		})
+    })
+})
+
+
+</script>
+
+</body>
+</html>
