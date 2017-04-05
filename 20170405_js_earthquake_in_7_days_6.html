@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<link rel="stylesheet" href="css/bootstrap.css">
+<link href="https://fonts.googleapis.com/css?family=Karla|Space+Mono" rel="stylesheet">
+<script src="js/jquery2.js"></script>
+<script src="js/handlebars-v4.0.5.js"></script>
+<style type="text/css">
+
+@media all and (orientation:landscape) {
+*{
+	font-family: 'Space Mono', monospace;
+}
+body{
+	background-color: #00ff3f;
+}
+h1{
+	font-size:100px;
+	line-height: 0.9em;
+}
+h3{
+	color:white;
+	transition-duration: .25s;
+}
+p{
+	letter-spacing: 0.04em;
+	color:white;
+	transition-duration: .25s;
+}
+.entries{
+	position: absolute;
+	background-color:white;
+	transition-duration: .25s;
+	border:1px solid white;
+}
+.entries:hover{
+	background-color:white;
+	z-index: 1;
+	border:1px solid #ff3126;
+}
+.link{
+	cursor:pointer;
+}
+#map{
+	position: fixed;
+	top:0px;
+	left:0%;
+	width:100%;
+	margin:auto;
+	background-image: url("assets/world_map_4c.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+	z-index: -1;
+	opacity:0.75;
+}
+#content{
+	position: fixed;
+	top:0px;
+	left:100px;
+	width:1109px;
+	height:540px;
+	margin:auto;
+	z-index: 1;
+}
+#caption{
+	position: fixed;
+	top:10px;
+	left:10px;
+	padding: 10px;
+	color:gray;
+	z-index:-2;
+	letter-spacing: 0.04em;
+	opacity:1;
+	transition-duration: .1s;
+}
+#footer{
+	position: fixed;
+	bottom:20px;
+	left:20px;
+	width:600px;
+	color:#efefef;
+	z-index: 2;
+	transition-duration: .25s;
+	cursor: pointer;
+}
+#footer:hover h3,#footer:hover p, #footer:hover #count{
+	color:gray;
+}
+#count{
+	position:relative;
+	font-family: 'Space Mono', monospace;
+	color:white;
+	letter-spacing: .06em;
+	font-size:.9em;
+	cursor:pointer;
+	transition-duration: .1s;
+}
+#horizontal{
+	visibility:hidden;
+}
+}
+@media all and (orientation:portrait) {
+body{
+	background-color: #00ff3f;
+}
+#content{
+	visibility:hidden;
+}
+#map{
+	visibility:hidden;
+}
+#footer{
+	visibility:hidden;
+}
+#caption{
+	visibility:hidden;
+}
+#horizontal{
+	visibility:visible;
+	color:white;
+	font-family: 'Space Mono', monospace;
+	text-align: center;
+	margin-top:45vh;
+	margin-bottom:50vh;
+}
+}
+
+</style>
+</head>
+<body>
+<div id="horizontal">
+		<h3>Please turn your device in horizontal format<h3>
+</div>
+
+<div>
+	<div id="map"></div>
+	<div id="content"></div>
+</div>
+
+<div id="caption">
+</div>
+
+<div id="footer">
+	<h3>USGS All Earthquakes Around the World<br/><span id="count"></span> Earthquakes in past 7 days</h3>
+	<p>Data provided by USGS</p>
+
+</div>
+
+
+
+<script type="text/x-template-handlebar" id="entries">
+{{#each entries}}
+	<a href="{{url}}" target="_blank" class="link">
+		<div class="entries" id="{{@index}}" style="width:{{size}}px; height:{{size}}px;left:{{coordinates_x}}px; top:{{coordinates_y}}px">
+		</div>
+	</a>
+{{/each}}
+</script>
+
+<script type="text/javascript">
+var source;
+var template;
+var html;
+var data;
+var ratioSize;
+var width;
+
+window.addEventListener("DOMContentLoaded", function(e){
+	width = window.innerWidth;
+	console.log(width)
+	var height = width/2.0537;
+	$("#map").css("height", height + "px");
+	ratioSize = width/1109;
+	console.log(ratioSize);
+})
+
+window.addEventListener("resize", function(){
+	width = window.innerWidth;
+	var height = width/2.0537;
+	$("#map").css("height", height + "px");
+	ratioSize = width/1109;
+})
+
+$(document).ready(function(){
+    $.getJSON('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson').then(function(res){
+
+    	console.log(res);
+
+    	//title
+    	console.log(res.features[0].properties.title);
+    	//coordinates
+    	console.log((res.features[0].geometry.coordinates[0]+540) + " and " + res.features[0].geometry.coordinates[1]+270);
+    	//place
+    	console.log(res.features[0].properties.place);
+    	//url
+    	console.log(res.features[3].properties.url);
+    	//magnitude
+    	console.log(res.features[0].properties.mag);
+        // var entryLength = Object.values(res.bpi).length;
+
+        data = {entries:[]};
+        var entryLength = res.features.length;
+        console.log(entryLength);
+
+        for(i=0; i<entryLength; i++){
+        	data.entries[i] = {title:'', coordinates_x:'', coordinates_y:'',place:'', url:'', mag:''}
+        }
+
+        for(i=0; i<entryLength; i++){
+        	data.entries[i].coordinates_x = (((((res.features[i].geometry.coordinates[0]+180)*ratioSize)*3)-100)-(res.features[i].properties.mag*3));
+        	data.entries[i].coordinates_y = ((
+        		(Math.abs(res.features[i].geometry.coordinates[1]-90))*ratioSize)*3
+        		)-(res.features[i].properties.mag*2);
+
+        	data.entries[i].mag = res.features[i].properties.mag;
+        	data.entries[i].size = (res.features[i].properties.mag*4);
+        	data.entries[i].place = res.features[i].properties.place;
+        	data.entries[i].url = res.features[i].properties.url;
+        }
+
+        console.log(data);
+
+        source = $("#entries").html();
+        template = Handlebars.compile(source);
+        html = template(data);
+
+		window.addEventListener("resize", function(){
+
+			for(j=0; j<entryLength; j++){
+				ratioSize = width/1109;
+	        	data.entries[j].coordinates_x = (((((res.features[j].geometry.coordinates[0]+180)*ratioSize)*3)-100)-(res.features[j].properties.mag*3));
+	        	data.entries[j].coordinates_y = ((
+	        		(Math.abs(res.features[j].geometry.coordinates[1]-90))*ratioSize)*3
+	        		)-(res.features[j].properties.mag*2);
+	        	data.entries[j].size = (res.features[j].properties.mag*4)*ratioSize;
+			}
+	        html = template(data);
+	        $("#content").html(html);
+	        console.log(data)
+		})
+
+        $("#content").html(html);
+        $("#count").text(res.metadata.count)
+
+		var swee2 = 0;
+		
+		shake = setInterval(function(){
+			console.log("shake")
+			if(swee2==0){
+				var ramdomNum = Math.random();
+				$("#count").css("left", ramdomNum*4 + "px");
+				$("#count").css("top", ramdomNum*2 + "px");
+				swee2=1;
+			}else if(swee2==1){
+				$("#count").css("left", "0px");
+				$("#count").css("top", "0px");
+				swee2=0;
+			}
+		},100);
+
+        var shake;
+        $(document).on("mouseover", ".entries", function() {
+        	var number = this.id;
+			$("#caption").html("<h1>" + res.features[number].properties.title + "</h1>");
+			$("#caption").css("opacity", "1");
+			var curX = parseInt($("#caption").css("left"));
+			var curY = parseInt($("#caption").css("top"));
+			var swee = 0;
+			var strength = (10-res.features[number].properties.mag)*10;
+
+			console.log(res.features[number].properties.mag);
+
+			shake = setInterval(function(){
+				console.log("shake")
+				if(swee==0){
+					$("#caption").css("left", 10 + (res.features[number].properties.mag*2) + "px");
+					swee=1;
+				}else if(swee==1){
+					$("#caption").css("left", "10px");
+					swee=0;
+				}
+			},strength);
+		});
+
+        $(document).on("mouseout", ".entries", function() {
+        	var number = this.id;
+			$("#caption").text("");
+			$("#caption").css("opacity", "1");
+			clearInterval(shake);
+		});
+    })
+})
+
+
+</script>
+
+</body>
+</html>
