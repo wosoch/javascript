@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Calculator</title>
+<link rel="stylesheet" href="css/bootstrap.css">
+<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+<script src="js/jquery2.js"></script>
+<style type="text/css">
+*{
+	font-family: 'Source Code Pro', monospace;
+}
+.number{
+	display:inline-block;
+	width:25%;
+	height:30%;
+	font-size:14px;
+	text-align:center;
+	cursor:pointer;
+	transition-duration: .15s;
+}
+.number h3{
+	padding: 4px 0px 0px 0px;
+	margin: 0px;
+	color:#d6d6d6;
+	transition-duration: .15s;
+}
+.number:hover h3{
+	color:gray;
+}
+.button{
+	cursor:pointer;
+	padding:6px;
+	color:#d6d6d6;
+	transition-duration: .125s;
+}
+.button:hover{
+	color:#333;
+}
+#decimalP{
+	position: fixed;
+	top:20px;
+	left:20px;
+	width:200px;
+	height:200px;
+	z-index: 1;
+	transition-duration: .125s;
+}
+#box{
+	position: relative;
+	width:100%;
+	height:90vh;
+}
+#calculator{
+	margin:auto;
+	position: absolute;
+	top:20%;
+	width:190px;
+	height:254px;
+	background-color:white;
+	padding:20px;
+	position: relative;;
+}
+#window{
+	box-sizing: initial;
+	position: fixed;
+	width:100%;
+	height:50px;
+	top:20px;
+	text-align: center;
+}
+#window h1{
+	font-family: 'Source Code Pro', monospace;
+}
+#number_pads{
+	font-size: 0;
+	position: absolute;
+	top:70px;
+	left:10px;
+	padding-left: 1px;
+	padding-top:1px;
+	width:170px;
+	height:171px;
+	background-color:white;
+}
+#calc{
+	padding:0px;
+	margin:6px 5px 0px 0px;
+	color:#636363;
+	font-weight: 200;
+	letter-spacing: .07em;
+}
+</style>
+</head>
+<body>
+<div id="decimalP">
+	<div class="button dec-one">0.0</div>
+	<div class="button dec-two">0.00</div>
+	<div class="button dec-three">0.000</div>
+</div>
+<div id="window">
+	<h1 id="calc">123</h1>
+</div>
+<div id="box">
+	<div id="calculator">
+
+		<div id="number_pads">
+			<div class="number numbers"><h3>1</h3></div>
+			<div class="number numbers"><h3>2</h3></div>
+			<div class="number numbers"><h3>3</h3></div>
+			<div class="number zero"><h3>c</h3></div>
+			<!--second row-->
+			<div class="number numbers"><h3>4</h3></div>
+			<div class="number numbers"><h3>5</h3></div>
+			<div class="number numbers"><h3>6</h3></div>
+			<div class="number minus"><h3>-</h3></div>
+			<!--third row-->
+			<div class="number numbers"><h3>7</h3></div>
+			<div class="number numbers"><h3>8</h3></div>
+			<div class="number numbers"><h3>9</h3></div>
+			<div class="number plus"><h3>+</h3></div>
+			<!--fourth row-->
+			<div class="number numbers"><h3>0</h3></div>
+			<div class="number multi"><h3>x</h3></div>
+			<div class="number divide"><h3>/</h3></div>
+			<div class="number result"><h3>=</h3></div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+
+var calcVal = 0;
+var calcVal2 = 0;
+var decPoint = 100;
+$(".dec-two").css("color", "#333");
+
+var func = "default";
+$("#calc").text(calcVal);
+
+function calculate2(key){
+	$(".number").css("background-color", "white");
+	if(func == "default"){
+		if(calcVal !== 0){
+			calcVal = calcVal + key;
+			$("#calc").text(calcVal);
+		}else{
+			calcVal = key;
+			$("#calc").text(calcVal);
+		}
+	}else if(func == "return"){
+		calcVal = 0;
+		calcVal2 = 0;
+		calcVal = key;
+		$("#calc").text(calcVal);
+		func = "default";
+	}else{
+		if(calcVal !== 0){
+			calcVal = calcVal + key;
+			$("#calc").text(calcVal);
+		}else{
+			calcVal = key;
+			$("#calc").text(calcVal);
+		}
+	}
+};
+
+function calculate(math){
+	if(func == math){
+	}else if(func == "minus" || func == "plus" || func == "divide" || func == "multi"){
+		func = math;
+		calcVal = 0;
+		$(".number").css("background-color", "white");
+		$("." + math).css("background-color", "gray");
+	}else{
+		calcVal2 = calcVal;
+		func = math;
+		calcVal = 0;
+		$("." + math).css("background-color", "gray");
+	}
+}
+
+function result(){
+	if(func == "plus"){
+		calcVal = Number(calcVal2) + Number(calcVal);
+	}else if(func == "minus"){
+		calcVal = Number(calcVal2) - Number(calcVal);
+	}else if(func == "multi"){
+		calcVal = Number(calcVal2) * Number(calcVal);
+	}else if(func == "divide"){
+		calcVal = Number(calcVal2) / Number(calcVal);
+	}
+	calcValRounded = (Math.round(calcVal * decPoint))/decPoint;
+	$("#calc").text(calcValRounded);
+	func = "return";
+};
+
+$(".numbers").click(function(){
+	calculate2(this.textContent);
+})
+
+$("body").keypress(function(e){
+
+	if(e.keyCode == 49){
+		calculate2("1");
+	}else if(e.keyCode == 50){
+		calculate2("2");
+	}else if(e.keyCode == 51){
+		calculate2("3");
+	}else if(e.keyCode == 52){
+		calculate2("4");
+	}else if(e.keyCode == 53){
+		calculate2("5");
+	}else if(e.keyCode == 54){
+		calculate2("6");
+	}else if(e.keyCode == 55){
+		calculate2("7");
+	}else if(e.keyCode == 56){
+		calculate2("8");
+	}else if(e.keyCode == 57){
+		calculate2("9");
+	}else if(e.keyCode == 48){
+		calculate2("0");
+	}else if(e.keyCode == 45){
+		calculate("minus");
+	}else if(e.keyCode == 61){
+		calculate("plus");
+	}else if(e.keyCode == 47){
+		calculate("divide");
+	}else if(e.keyCode == 13){
+		result();
+	}
+})
+
+
+$(".plus").click(function(){
+	calculate("plus");
+})
+$(".minus").click(function(){
+	calculate("minus");
+})
+$(".multi").click(function(){
+	calculate("multi");
+})
+$(".divide").click(function(){
+	calculate("divide");
+})
+$(".zero").click(function(){
+	$(".number").css("background-color", "white");
+	calcVal = 0;
+	$("#calc").text(calcVal);
+});
+$(".result").click(function(){
+	$(".number").css("background-color", "white");
+	result();
+})
+
+$(".dec-one").click(function(){
+	decPoint = 10;
+	$(".button").css("color", "#d6d6d6")
+	$(".dec-one").css("color", "#333");
+	if(func == "minus" || func == "plus" || func == "divide" || func == "multi"){
+	}else{
+		calcValRounded = (Math.round(calcVal * decPoint))/decPoint;
+		$("#calc").text(calcValRounded);
+	}
+})
+$(".dec-two").click(function(){
+	decPoint = 100;
+	$(".button").css("color", "#d6d6d6")
+	$(".dec-two").css("color", "#333");
+	if(func == "minus" || func == "plus" || func == "divide" || func == "multi"){
+	}else{
+		calcValRounded = (Math.round(calcVal * decPoint))/decPoint;
+		$("#calc").text(calcValRounded);
+	}
+})
+$(".dec-three").click(function(){
+	decPoint = 1000;
+	$(".button").css("color", "#d6d6d6")
+	$(".dec-three").css("color", "#333");
+	if(func == "minus" || func == "plus" || func == "divide" || func == "multi"){
+	}else{
+		calcValRounded = (Math.round(calcVal * decPoint))/decPoint;
+		$("#calc").text(calcValRounded);
+	}
+})
+
+</script>
+
+</body>
+</html>
