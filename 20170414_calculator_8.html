@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Calculator</title>
+<link rel="stylesheet" href="css/bootstrap.css">
+<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+<script src="js/jquery2.js"></script>
+<style type="text/css">
+*{
+	font-family: 'Source Code Pro', monospace;
+}
+.number{
+	display:inline-block;
+	width:25%;
+	height:25%;
+	font-size:14px;
+	text-align:center;
+	cursor:pointer;
+	transition-duration: .15s;
+}
+.number h3{
+	padding: 4px 0px 0px 0px;
+	margin: 0px;
+	color:#d6d6d6;
+	transition-duration: .15s;
+}
+.number:hover h3{
+	color:gray;
+}
+.button, .button2{
+	cursor:pointer;
+	padding:6px;
+	color:#d6d6d6;
+	transition-duration: .125s;
+}
+.button:hover, .button2:hover{
+	color:#333;
+}
+#name{
+	position: fixed;
+	top:20px;
+	left:20px;
+	z-index: 1;
+	transition-duration: .125s;
+}
+#decimalP{
+	position: fixed;
+	top:20px;
+	right:20px;
+	width:100px;
+	z-index: 1;
+	transition-duration: .125s;
+	padding-left:10px;
+	border-left:1px solid #333;
+}
+#scaling{
+	position: fixed;
+	bottom:20px;
+	right:20px;
+	width:100px;
+	z-index: 1;
+	transition-duration: .125s;
+	padding-left:10px;
+	border-left:1px solid #333;
+}
+#pixel{
+	position: fixed;
+	bottom:20px;
+	left:20px;
+	z-index: 1;
+	transition-duration: .125s;
+}
+#box{
+	position: relative;
+	width:100%;
+	height:90vh;
+}
+#calculator{
+	margin:auto;
+	position: absolute;
+	top:20%;
+	width:190px;
+	height:254px;
+	background-color:transparent;
+	padding:20px;
+	position: relative;;
+}
+#window{
+	box-sizing: initial;
+	position: fixed;
+	width:100%;
+	height:50px;
+	top:20px;
+	text-align: center;
+}
+#window h1{
+	font-family: 'Source Code Pro', monospace;
+}
+#number_pads{
+	font-size: 0;
+	position: absolute;
+	top:70px;
+	left:10px;
+	padding-left: 1px;
+	padding-top:1px;
+	width:170px;
+	height:171px;
+}
+#calc{
+	padding:0px;
+	margin:6px 5px 0px 0px;
+	color:#636363;
+	font-weight: 200;
+	letter-spacing: .07em;
+	transition-duration: .25s;
+}
+#scale{
+	display: inline-block;
+	font-size: 0;
+	position: fixed;
+	top:0px;
+	left:0px;
+	margin:0;
+	padding:0;
+	width:100%;
+	height:100vh;
+	background-color: #f9f9f9;
+	z-index: -1;
+}
+#number1{
+	position: relative;
+	background-color:#8bf9e3;
+	transition-duration: 1s;
+	height:0px;
+}
+#number2{
+	position: relative;
+	background-color:#c1fff2;
+	transition-duration: 1s;
+	width:100%;
+	height:0px;
+}
+#number3{
+	position: absolute;
+	bottom:0px;
+	background-color:red;
+	transition-duration: 1s;
+	width:100%;
+	height:0px;
+	opacity:.1;
+}
+</style>
+</head>
+<body>
+<div id="name">Size of the Numbers<br/>0 &#8211; &infin;</div>
+<div id="decimalP">
+	<div class="button dec-one">0.0</div>
+	<div class="button dec-two">0.00</div>
+	<div class="button dec-three">0.000</div>
+	<div class="button dec-four">0.0000</div>
+</div>
+
+<div id="scaling">
+	<div class="button2 sca-one">100px = 1</div>
+	<div class="button2 sca-two">50px = 1</div>
+	<div class="button2 sca-three">25px = 1</div>
+	<div class="button2 sca-four">10px = 1</div>
+</div>
+
+<div id="window">
+	<h1 id="calc">123</h1>
+</div>
+<div id="pixel"></div>
+<div id="box">
+	<div id="calculator">
+
+		<div id="number_pads">
+			<div class="number numbers"><h3>1</h3></div>
+			<div class="number numbers"><h3>2</h3></div>
+			<div class="number numbers"><h3>3</h3></div>
+			<div class="number zero"><h3>c</h3></div>
+			<!--second row-->
+			<div class="number numbers"><h3>4</h3></div>
+			<div class="number numbers"><h3>5</h3></div>
+			<div class="number numbers"><h3>6</h3></div>
+			<div class="number minus"><h3>-</h3></div>
+			<!--third row-->
+			<div class="number numbers"><h3>7</h3></div>
+			<div class="number numbers"><h3>8</h3></div>
+			<div class="number numbers"><h3>9</h3></div>
+			<div class="number plus"><h3>+</h3></div>
+			<!--fourth row-->
+			<div class="number numbers"><h3>0</h3></div>
+			<div class="number multi"><h3>x</h3></div>
+			<div class="number divide"><h3>/</h3></div>
+			<div class="number result"><h3>=</h3></div>
+		</div>
+	</div>
+</div>
+
+<div id="scale">
+	<div id="number1">
+		<div id="number3"></div>
+	</div>
+	<div id="number2"></div>
+</div>
+
+<script type="text/javascript">
+
+var calcVal = 0;
+var calcVal2 = 0;
+var calcVal3 = 0;
+var storedVal = 0;
+var decPoint = 100;
+var screenWidth = window.innerWidth;
+var scaling = 100;
+
+$(".dec-two").css("color", "#333");
+$(".sca-one").css("color", "#333");
+
+var func = "default";
+$("#calc").text(calcVal);
+$("#pixel").text(0 + " pixels");
+
+function sizing(){
+	$("#number1").css("width", "100%");
+	if(storedVal >= 0){
+		$("#calc").css("color", "#333");
+		$("#number1").css("background-color", "#8bf9e3");
+		$("#number1").css("height", (storedVal/screenWidth) * scaling +"px");
+	}else if(storedVal < 0){
+		calcVal = 0;
+		storedVal = 0;
+		$("#number1").css("height", (storedVal/screenWidth) * scaling +"px");
+		$("#calc").text(calcVal);
+	}
+	
+	$("#pixel").text(storedVal * scaling + " pixels");
+}
+sizing();
+
+$(window).click(function(){
+	sizing();
+	console.log(func);
+});
+
+$(window).resize(function(){
+	screenWidth = window.innerWidth;
+	$("#number1").css("width", "100%");
+	$("#number1").css("height", (storedVal/screenWidth)*scaling +"px");
+})
+
+function calculate2(key){
+	$(".number").css("background-color", "none");
+	if(func == "default"){
+		if(calcVal !== 0){
+			calcVal = calcVal + key;
+			$("#calc").text(calcVal);
+			calcVal3 = calcVal;
+			$("#number2").css("height", (calcVal3/screenWidth) * scaling +"px");
+		}else{
+			calcVal = key;
+			$("#calc").text(calcVal);
+			calcVal3 = calcVal;
+			$("#number2").css("height", (calcVal3/screenWidth) * scaling +"px");
+		}
+	}else if(func == "return"){
+		calcVal = 0;
+		calcVal2 = 0;
+		calcVal = key;
+		$("#calc").text(calcVal);
+		func = "default";
+		calcVal3 = 0;
+	}else if(func == "plus"){
+		if(calcVal !== 0){
+			calcVal = calcVal + key;
+			$("#calc").text(calcVal);
+			calcVal3 = calcVal
+			$("#number2").css("height", (calcVal3/screenWidth) * scaling +"px");
+		}else{
+			calcVal = key;
+			$("#calc").text(calcVal);
+			calcVal3 = calcVal;
+			$("#number2").css("height", (calcVal3/screenWidth) * scaling +"px");
+		}
+	}else if(func == "multi"){
+		if(calcVal !== 0){
+			calcVal = calcVal + key;
+			$("#calc").text(calcVal);
+			calcVal3 = storedVal;
+			calcVal3 = (calcVal3 * calcVal) - calcVal3;
+			$("#number2").css("height", (calcVal3/screenWidth) * scaling +"px");
+		}else{
+			calcVal = key;
+			$("#calc").text(calcVal);
+			calcVal3 = storedVal;
+			calcVal3 = (calcVal3 * calcVal) - calcVal3;
+			$("#number2").css("height", (calcVal3/screenWidth) * scaling +"px");
+		}
+	}else if(func == "minus"){
+		if(calcVal !== 0){
+			calcVal = calcVal + key;
+			$("#calc").text(calcVal);
+			calcVal3 = calcVal;
+			$("#number3").css("height", (calcVal3/screenWidth) * scaling +"px");
+		}else{
+			calcVal = key;
+			$("#calc").text(calcVal);
+			calcVal3 = calcVal;
+			$("#number3").css("height", (calcVal3/screenWidth) * scaling +"px");
+		}
+	}else if(func == "divide"){
+		if(calcVal !== 0){
+			calcVal = calcVal + key;
+			$("#calc").text(calcVal);
+			calcVal3 = storedVal;
+			calcVal3 = ((calcVal3 / calcVal) * calcVal) - (calcVal3 / calcVal);
+			console.log(calcVal3 + " and " + calcVal);
+			$("#number3").css("height", (calcVal3/screenWidth) * scaling +"px");
+		}else{
+			calcVal = key;
+			$("#calc").text(calcVal);
+			calcVal3 = storedVal;
+			calcVal3 = ((calcVal3 / calcVal) * calcVal) - (calcVal3 / calcVal);
+			console.log(calcVal3 + " and " + calcVal);
+			$("#number3").css("height", (calcVal3/screenWidth) * scaling +"px");
+		}
+	}else{
+		if(calcVal !== 0){
+			calcVal = calcVal + key;
+			$("#calc").text(calcVal);
+			calcVal3 = calcVal
+		}else{
+			calcVal = key;
+			$("#calc").text(calcVal);
+			calcVal3 = calcVal
+		}
+	}
+};
+
+function calculate(math){
+	if(func == math){
+	}else if(func == "minus" || func == "plus" || func == "divide" || func == "multi"){
+		func = math;
+		calcVal = 0;
+		$(".number").css("background-color", "transparent");
+		$("." + math).css("background-color", "gray");
+	}else{
+		calcVal2 = calcVal;
+		func = math;
+		calcVal = 0;
+		$("." + math).css("background-color", "gray");
+	}
+}
+
+function result(){
+	if(func == "plus"){
+		calcVal = Number(calcVal2) + Number(calcVal);
+	}else if(func == "minus"){
+		calcVal = Number(calcVal2) - Number(calcVal);
+	}else if(func == "multi"){
+		calcVal = Number(calcVal2) * Number(calcVal);
+	}else if(func == "divide"){
+		calcVal = Number(calcVal2) / Number(calcVal);
+	}
+	calcValRounded = (Math.round(calcVal * decPoint))/decPoint;
+	$("#calc").text(calcValRounded);
+	storedVal = Math.round(calcVal);
+	func = "return";
+};
+
+$(".numbers").click(function(){
+	calculate2(this.textContent);
+})
+
+$(".plus").click(function(){
+	calculate("plus");
+})
+$(".minus").click(function(){
+	calculate("minus");
+})
+$(".multi").click(function(){
+	calculate("multi");
+})
+$(".divide").click(function(){
+	calculate("divide");
+})
+$(".zero").click(function(){
+	$("#calc").css("color", "#333");
+	$(".number").css("background-color", "transparent");
+	calcVal = 0;
+	storedVal = 0;
+	$("#calc").text(calcVal);
+	$("#number1").css("height", "0px");
+	calcVal3 = 0;
+});
+$(".result").click(function(){
+	$(".number").css("background-color", "transparent");
+	calcVal3 = 0;
+	$("#number2").css("height", (calcVal3/screenWidth) * scaling +"px");
+	$("#number3").css("height", (calcVal3/screenWidth) * scaling +"px");
+	result();
+})
+
+function decimalPoint(decLoc, buttonNum){
+	decPoint = decLoc;
+	$(".button").css("color", "#d6d6d6")
+	$(".dec-"+buttonNum).css("color", "#333");
+	if(func == "minus" || func == "plus" || func == "divide" || func == "multi"){
+	}else{
+		calcValRounded = (Math.round(calcVal * decPoint))/decPoint;
+		$("#calc").text(calcValRounded);
+	}
+}
+$(".dec-one").click(function(){
+	decimalPoint(10, "one");
+});
+$(".dec-two").click(function(){
+	decimalPoint(100, "two");
+})
+$(".dec-three").click(function(){
+	decimalPoint(1000, "three");
+})
+$(".dec-four").click(function(){
+	decimalPoint(10000, "four");
+})
+
+function scalingFunc(scale, buttonNum){
+	scaling = scale;
+	$(".button2").css("color", "#d6d6d6")
+	$("#number1").css("height", (storedVal/screenWidth) * scaling +"px");
+	$("#pixel").text(storedVal * scaling + " pixels");
+	$(".sca-"+buttonNum).css("color", "#333");
+}
+$(".sca-one").click(function(){
+	scalingFunc(100, "one");
+});
+$(".sca-two").click(function(){
+	scalingFunc(50, "two");
+})
+$(".sca-three").click(function(){
+	scalingFunc(25, "three");
+})
+$(".sca-four").click(function(){
+	scalingFunc(10, "four");
+})
+
+</script>
+
+</body>
+</html>
